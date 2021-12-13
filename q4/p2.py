@@ -1,5 +1,6 @@
 import sys
 from board import Board
+import functools
 def load_data():
     fileanme = sys.argv[1]
     with open(fileanme, 'r') as f:
@@ -19,13 +20,14 @@ def load_data():
 moves,boards = load_data()
 bingo = False
 bingo_board = 0
+bingos = [False] * len(boards)
 for move in moves:
     for idx,board in enumerate(boards):
         board.select(move)
-        if board.check_bingo():
+        if not board.get_bingo() and board.check_bingo():
             bingo = True
             bingo_board = idx
-            break
-    if bingo:
+            bingos[idx] = True
+    if functools.reduce(lambda x,y: x&y,bingos):
         break
 boards[bingo_board].get_score()
